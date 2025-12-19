@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Successful</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 50px 40px;
+        text-align: center;
+        max-width: 500px;
+        animation: slideUp 0.6s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .success-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+        animation: scaleIn 0.6s ease-out;
+      }
+
+      @keyframes scaleIn {
+        from {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      h1 {
+        color: #333;
+        font-size: 32px;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      .message {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-home {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-download {
+        background: #f0f0f0;
+        color: #333;
+        border: 2px solid #667eea;
+      }
+
+      .btn-download:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .success-message {
+        background: #f0fdf4;
+        border-left: 4px solid #22c55e;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 30px 0;
+        color: #166534;
+        font-size: 14px;
+      }
+
+      .payment-details {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      .payment-details p {
+        margin: 10px 0;
+        color: #333;
+        font-size: 14px;
+        word-break: break-all;
+      }
+
+      .payment-details strong {
+        color: #667eea;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='95' fill='%2322c55e'/%3E%3Ccircle cx='100' cy='100' r='85' fill='%2316a34a'/%3E%3Cpath d='M 60 100 L 85 125 L 140 70' stroke='white' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+        alt="Success"
+        class="success-icon"
+      />
+
+      <h1>Payment Successful! ✓</h1>
+
+      <p class="message">
+        Your payment has been processed successfully. Thank you for your
+        purchase!
+      </p>
+
+      <div class="payment-details">
+        <p><strong>Order ID:</strong> <span id="order-id">Loading...</span></p>
+        <p>
+          <strong>Payment ID:</strong> <span id="payment-id">Loading...</span>
+        </p>
+      </div>
+
+      <div class="success-message">
+        Your transaction ID has been saved and you can download your receipt at
+        any time.
+      </div>
+
+      <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById("order-id").textContent =
+          urlParams.get("order_id") || "N/A";
+        document.getElementById("payment-id").textContent =
+          urlParams.get("payment_id") || "N/A";
+      </script>
+
+      <div class="button-group">
+        <button class="btn-home" onclick="window.location.href='/'">
+          Continue Shopping
+        </button>
+        <button class="btn-download" onclick="window.print()">
+          Download Receipt
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
