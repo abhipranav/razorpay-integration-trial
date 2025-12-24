@@ -15,7 +15,11 @@ const __dirname = path.dirname(__filename)
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf.toString();
+    }
+}));
 app.use(express.urlencoded({extended: true}));
 
 app.use(express.static(path.join(__dirname)));
@@ -108,6 +112,57 @@ app.post('/verify-payment', async (req, res) => {
     } catch(error) {
         console.error(error);
         res.status(500).json({ status: 'error', message: 'Error verifying payment' });
+    }
+});
+
+// Route to handle webhooks
+app.post('/webhook', async (req, res) => {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    const signature = req.headers['x-razorpay-signature'];
+    
+    // In a real scenario, you access the raw body. 
+    // Since we are using express.json(), we need to stringify it back or use a raw body parser.
+    // However, Razorpay SDK's validateWebhookSignature usually expects the raw string body.
+    // For this simple example, we might need to adjust body parsing or just trust `JSON.stringify(req.body)` 
+    // BUT JSON.stringify might not match the original raw body bytes exactly (whitespace, key order).
+    // A robust way uses a custom middleware to capture rawBody. 
+    // Let's stick to standard practice: 
+    // validation requires the raw body content. 
+    
+    // NOTE: validateWebhookSignature expects the body as a string.
+    
+    try {
+         // We are now capturing the raw body in the express.json() middleware
+         const body = req.rawBody;
+
+        const isValid = validateWebhookSignature(body, signature, secret);
+
+        if (isValid) {
+            const event = req.body.event;
+            const payload = req.body.payload;
+
+            if (event === 'payment.captured') {
+                const payment = payload.payment.entity;
+                const orderId = payment.order_id;
+                
+                const orders = await readData();
+                const order = orders.find(o => o.order_id === orderId);
+                
+                if (order) {
+                    order.status = 'paid';
+                    order.payment_id = payment.id;
+                    order.webhook_received = true; // Mark that we got it via webhook
+                    await writeData(orders);
+                    console.log(`Order ${orderId} updated via webhook`);
+                }
+            }
+            res.status(200).json({ status: 'ok' });
+        } else {
+            res.status(400).json({ status: 'invalid_signature' });
+        }
+    } catch (error) {
+        console.error('Webhook error:', error);
+        res.status(500).json({ status: 'error' });
     }
 });
 

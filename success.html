@@ -151,9 +151,9 @@
         class="success-icon"
       />
 
-      <h1>Payment Successful! ✓</h1>
+      <h1>Payment Successful!</h1>
 
-      <p class="message">
+      <p class="message" id="success-message">
         Your payment has been processed successfully. Thank you for your
         purchase!
       </p>
@@ -176,6 +176,21 @@
           urlParams.get("order_id") || "N/A";
         document.getElementById("payment-id").textContent =
           urlParams.get("payment_id") || "N/A";
+        
+        const amount = urlParams.get("amount");
+        const currency = urlParams.get("currency");
+        
+        if (amount && currency) {
+            // Amount is in paise, convert to main unit
+            const mainAmount = (parseInt(amount) / 100).toFixed(2);
+            let currencySymbol = currency;
+            if (currency === 'INR') currencySymbol = '₹';
+            else if (currency === 'USD') currencySymbol = '$';
+            else if (currency === 'EUR') currencySymbol = '€';
+            
+            document.getElementById("success-message").textContent = 
+                `Payment of ${currencySymbol}${mainAmount} successful`;
+        }
       </script>
 
       <div class="button-group">

@@ -75,7 +75,7 @@
               .then((res) => res.json())
               .then((data) => {
                 if (data.status === "ok") {
-                  window.location.href = `/payment-success?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}`;
+                  window.location.href = `/payment-success?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&amount=${order.amount}&currency=${order.currency}`;
                 } else {
                   alert("Payment verification failed");
                 }
